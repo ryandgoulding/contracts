@@ -50,7 +50,7 @@ scriptMaster() {
       echoDebug "local testnetwork 'localanvil' is running"
     else
       echoDebug "Anvil process is not running. Starting network now."
-      $(anvil -m "$MNEMONIC" -f $ETH_NODE_URI_MAINNET --fork-block-number 17427723 >/dev/null) &
+      $(anvil -m "$MNEMONIC" -f $ETH_NODE_URI_MAINNET --fork-block-number 17627330 >/dev/null) &
       if pgrep -x "anvil" >/dev/null; then
         echoDebug "local testnetwork 'localanvil' is running"
       else
