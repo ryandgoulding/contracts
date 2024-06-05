@@ -21,12 +21,7 @@ contract DeployScript is DeployScriptBase {
         );
     }
 
-    function getConstructorArgs()
-        internal
-        view
-        override
-        returns (bytes memory)
-    {
+    function getConstructorArgs() internal override returns (bytes memory) {
         // get path of global config file
         string memory globalConfigPath = string.concat(
             root,

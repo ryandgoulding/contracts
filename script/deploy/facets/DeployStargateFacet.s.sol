@@ -19,12 +19,7 @@ contract DeployScript is DeployScriptBase {
         deployed = StargateFacet(deploy(type(StargateFacet).creationCode));
     }
 
-    function getConstructorArgs()
-        internal
-        view
-        override
-        returns (bytes memory)
-    {
+    function getConstructorArgs() internal override returns (bytes memory) {
         string memory path = string.concat(root, "/config/stargate.json");
         string memory json = vm.readFile(path);
 
