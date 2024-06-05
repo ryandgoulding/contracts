@@ -136,7 +136,7 @@ contract StargateFacetTest is TestBaseFacet {
     function initiateBridgeTxWithFacet(bool isNative) internal override {
         if (isNative) {
             stargateFacet.startBridgeTokensViaStargate{
-                value: bridgeData.minAmount + nativeAddToMessageValue
+                value: bridgeData.minAmount
             }(bridgeData, stargateData);
         } else {
             stargateFacet.startBridgeTokensViaStargate{
@@ -147,7 +147,7 @@ contract StargateFacetTest is TestBaseFacet {
 
     function initiateSwapAndBridgeTxWithFacet(bool) internal override {
         stargateFacet.swapAndStartBridgeTokensViaStargate{
-            value: nativeAddToMessageValue
+            value: addToMessageValue
         }(bridgeData, swapData, stargateData);
     }
 
@@ -155,14 +155,16 @@ contract StargateFacetTest is TestBaseFacet {
 
     function test_CanBridgeNativeTokensWithDestinationCall()
         public
+        assertBalanceChange(
+            address(0),
+            USER_SENDER,
+            -int256((defaultNativeAmount))
+        )
         assertBalanceChange(address(0), USER_RECEIVER, 0)
         assertBalanceChange(ADDRESS_USDC, USER_SENDER, 0)
         assertBalanceChange(ADDRESS_DAI, USER_SENDER, 0)
     {
         vm.startPrank(USER_SENDER);
-        // Get initial balance
-        uint256 initialBalance = USER_SENDER.balance;
-
         // customize bridgeData
         bridgeData.sendingAssetId = address(0);
         bridgeData.minAmount = defaultNativeAmount;
@@ -182,9 +184,7 @@ contract StargateFacetTest is TestBaseFacet {
             10, // Optimism chainId
             stargateData
         );
-        stargateData.lzFee = nativeAddToMessageValue =
-            nativeAddToMessageValue +
-            nativeFees;
+        stargateData.lzFee = nativeFees;
 
         //prepare check for events
         vm.expectEmit(true, true, true, true, _facetTestContractAddress);
@@ -195,13 +195,6 @@ contract StargateFacetTest is TestBaseFacet {
         emit LiFiTransferStarted(bridgeData);
 
         initiateBridgeTxWithFacet(true);
-
-        // check balance after call and assert
-        uint256 currentBalance = USER_SENDER.balance;
-        uint256 expectedBalance = initialBalance -
-            defaultNativeAmount -
-            stargateData.lzFee;
-        assertEq(currentBalance, expectedBalance);
         vm.stopPrank();
     }
 
@@ -252,7 +245,7 @@ contract StargateFacetTest is TestBaseFacet {
         assertBalanceChange(
             address(0),
             USER_SENDER,
-            -int256((defaultNativeAmount + nativeAddToMessageValue))
+            -int256((defaultNativeAmount))
         )
         assertBalanceChange(address(0), USER_RECEIVER, 0)
         assertBalanceChange(ADDRESS_USDC, USER_SENDER, 0)
@@ -310,7 +303,6 @@ contract StargateFacetTest is TestBaseFacet {
 
         bridgeData.minAmount = amountOut;
         stargateData.minAmountLD = (amountOut * 90) / 100;
-        stargateData.lzFee = nativeAddToMessageValue;
         addToMessageValue = 0;
 
         delete swapData;

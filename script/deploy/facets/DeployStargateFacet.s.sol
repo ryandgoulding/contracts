@@ -19,14 +19,19 @@ contract DeployScript is DeployScriptBase {
         deployed = StargateFacet(deploy(type(StargateFacet).creationCode));
     }
 
-    function getConstructorArgs() internal override returns (bytes memory) {
+    function getConstructorArgs()
+        internal
+        view
+        override
+        returns (bytes memory)
+    {
         string memory path = string.concat(root, "/config/stargate.json");
         string memory json = vm.readFile(path);
 
-        address stargateComposer = json.readAddress(
+        address composer = json.readAddress(
             string.concat(".composers.", network)
         );
 
-        return abi.encode(stargateComposer);
+        return abi.encode(composer);
     }
 }

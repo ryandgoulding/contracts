@@ -16,12 +16,7 @@ contract DeployScript is DeployScriptBase {
         deployed = ERC20Proxy(deploy(type(ERC20Proxy).creationCode));
     }
 
-    function getConstructorArgs()
-        internal
-        view
-        override
-        returns (bytes memory)
-    {
+    function getConstructorArgs() internal override returns (bytes memory) {
         return abi.encode(deployerAddress);
     }
 }

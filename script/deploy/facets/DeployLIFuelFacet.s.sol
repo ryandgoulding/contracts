@@ -14,7 +14,6 @@ contract DeployScript is DeployScriptBase {
         public
         returns (LIFuelFacet deployed, bytes memory constructorArgs)
     {
-        constructorArgs = abi.encodePacked("");
         deployed = LIFuelFacet(deploy(type(LIFuelFacet).creationCode));
     }
 }
